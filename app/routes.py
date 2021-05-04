@@ -1,25 +1,38 @@
 from app import db
 from flask import Blueprint
 from flask import request
+from flask import jsonify
 from .models.book import Book 
 
 books_bp = Blueprint("books", __name__, url_prefix="/book")
-@books.bp.route("", methods=["POST"], strict_slashes=False)
+@books.bp.route("", methods=["POST", "GET"], strict_slashes=False)
 
 def books():
-    request_body = request.get_json()
+    if request.method == "GET":
+        books = Book.query.all()
+        books_response = {}
 
-    new_book = Book(title = request_body["title"],
-                        description=request_body["description"])
+        for book in books:
+            books_response.append({
+                "id": book.id,
+                "title": book.title,
+                "description": book.description
+                })
+        return jsonify(books_response), 200
 
-    db.session.add(new_book)
-    db.session.commit()
+    else:
+        request_body = request.get_json()
 
-    # return (f"book {new_book.title} has been created", 201)
-    return {
-        "success": True,
-        "message": f"Book {new_book.title} has been created"
-    }, 201
+        new_book = Book(title = request_body["title"],
+                            description=request_body["description"])
+
+        db.session.add(new_book)
+        db.session.commit()
+        # return (f"book {new_book.title} has been created", 201)
+        return {
+            "success": True,
+            "message": f"Book {new_book.title} has been created"
+        }, 201
 
 
 # hello_world_bp = Blueprint("hello_world", __name__)
