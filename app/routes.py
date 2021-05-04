@@ -74,6 +74,31 @@ def books():
 def handle_book(book_id):
     book = Book.query.get(book_id)
 
+@books_bp.route("/<book_id>", methods=["GET", "PUT", "DELETE"])
+def handle_book(book_id):
+    book = Book.query.get(book_id)
+    if book is None:
+        return make_response("", 404)
+
+    if request.method == "GET":
+        return {
+            "id": book.id,
+            "title": book.title,
+            "description": book.description
+        }
+    elif request.method == "PUT":
+        form_data = request.get_json()
+
+        book.title = form_data["title"]
+        book.description = form_data["description"]
+
+        db.session.commit()
+
+        return make_response(f"Book #{book.id} successfully updated")
+    elif request.method == "DELETE":
+        db.session.delete(book)
+        db.session.commit()
+        return make_response(f"Book #{book.id} successfully deleted")
     if request.method == "GET":
         return {
             "id": book.id,
