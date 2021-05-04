@@ -68,6 +68,31 @@ def books():
         "message": f"Book {new_book.title} has been created"
     }, 201
 
+#GET PUT DELETE 
+
+@books_bp.route("/<book_id>", methods=["GET", "PUT", "DELETE"])
+def handle_book(book_id):
+    book = Book.query.get(book_id)
+
+    if request.method == "GET":
+        return {
+            "id": book.id,
+            "title": book.title,
+            "description": book.description
+        }
+    elif request.method == "PUT":
+        form_data = request.get_json()
+
+        book.title = form_data["title"]
+        book.description = form_data["description"]
+
+        db.session.commit()
+
+        return make_response(f"Book #{book.id} successfully updated")
+    elif request.method == "DELETE":
+        db.session.delete(book)
+        db.session.commit()
+        return make_response(f"Book #{book.id} successfully deleted")
 
 #update and delete ---------------------------------------------
 # from app import db
