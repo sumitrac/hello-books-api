@@ -5,6 +5,23 @@ from flask import jsonify
 from .models.book import Book 
 
 books_bp = Blueprint("books", __name__, url_prefix="/book")
+@books_bp.route("/book_id>", methods=["GET"], strict_slashes=False)
+def get_single_book(book_id):
+    #Try to find the book with the given id 
+    book = Book.query.get(book_id)
+
+    if book:
+        return {
+            "id": book.id,
+            "title": book.title,
+            "description": book.description
+        }, 200
+    return {
+        "message": f"Book with id {book_id} was not found",
+        "success": False,
+    }, 400
+
+
 @books.bp.route("", methods=["POST", "GET"], strict_slashes=False)
 
 def books():
