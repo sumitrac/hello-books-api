@@ -37,7 +37,7 @@ def get_single_book(book_id):
         "success": False,
     }, 400
 
-@books.bp.route("", methods=["GET"], strict_slashes=False)
+@books_bp.route("", methods=["GET"], strict_slashes=False)
 def books_index():
     books = Book.query.all()
     books_response = {}
@@ -52,7 +52,7 @@ def books_index():
     return jsonify(books_response), 200
 
 
-@books.bp.route("", methods=["POST"], strict_slashes=False)
+@books_bp.route("", methods=["POST"], strict_slashes=False)
 
 def books():
     request_body = request.get_json()
